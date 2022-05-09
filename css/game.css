@@ -1,0 +1,50 @@
+#single-player-board{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.trivia-card{
+    background-color: white;
+    border-radius: 1rem;
+    padding-inline: 1rem;
+    padding-bottom: 1rem;
+}
+
+.answers-card{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    min-height: 20vh;
+}
+
+.answers-card > ul {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    list-style-type: none;
+    justify-content: space-evenly;
+    margin-right: auto;
+}
+.answers-card > ul > li {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: aqua;
+    font-size: 22px;
+    text-align: center;
+    border-radius: 1rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+
+}
+.answers-card > ul > li > p {
+    margin: 0;
+}
+
+.answers-card > img {
+    aspect-ratio: 1;
+    height: 20vh;
+    border: solid 2px;
+    border-radius: 1rem;
+}
