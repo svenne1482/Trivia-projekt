@@ -1,44 +1,38 @@
 var currentQuestionIndex;
 var questionsList;
 
-const rippleTitle = async () =>
-{
+const rippleTitle = async () => {
     var title = document.getElementById("title");
     var letters = title.children;
     var i = 0;
-    for(let letter of letters)
-    {
-        i = i+1;
-        letter.style = 'animation-name: enlarge; animation-duration: 200ms; animation-delay: ' + (50*i).toString() + 'ms';
+    for (let letter of letters) {
+        i = i + 1;
+        letter.style = 'animation-name: enlarge; animation-duration: 200ms; animation-delay: ' + (50 * i).toString() + 'ms';
     }
     await delay(100);
-    for(let letter of letters)
-    {
+    for (let letter of letters) {
         await delay(100);
         letter.style = '';
     }
 }
 
-const apiRequest = async (url) =>
-{
+const apiRequest = async (url) => {
     const response = await fetch(url);
     return await response.json(); //extract JSON from the http response
 }
 
-const fetchTrivia = async () => 
-{
+const fetchTrivia = async () => {
     var json = await apiRequest('https://opentdb.com/api.php?amount=10&category=21&difficulty=medium&type=multiple');
-        questionsList = json.results;
+    questionsList = json.results;
     currentQuestionIndex = 0;
     var currentQuestion = questionsList[currentQuestionIndex];
     var image = await fetchImage(currentQuestion.category);
-    createTriviaCard(currentQuestion.question,currentQuestion.correct_answer,currentQuestion.incorrect_answers,image);
+    createTriviaCard(currentQuestion.question, currentQuestion.correct_answer, currentQuestion.incorrect_answers, image);
 
 }
 
-const createTriviaCard = async (q,correct,ansList,imageUrl) =>
-{
-    ansList = insertAtRandom(correct,ansList);
+const createTriviaCard = async (q, correct, ansList, imageUrl) => {
+    ansList = insertAtRandom(correct, ansList);
     var board = document.getElementById("single-player-board");
     var card = document.createElement("div");
     board.appendChild(card);
@@ -56,6 +50,7 @@ const createTriviaCard = async (q,correct,ansList,imageUrl) =>
         var text = document.createElement("p");
         text.innerHTML = ansList[i];
         answer.appendChild(text);
+        answer.classList.add("question");
         answer.onclick = submitAnswer;
         answers.appendChild(answer);
     }
@@ -64,7 +59,7 @@ const createTriviaCard = async (q,correct,ansList,imageUrl) =>
     answersCard.appendChild(image);
 }
 
-const insertAtRandom = (item,array) => {
+const insertAtRandom = (item, array) => {
     array.push(item);
     return shuffleArray(array);
 }
@@ -76,32 +71,47 @@ function shuffleArray(array) {
     return array;
 }
 
-const fetchImage = async (category) =>
-{
+const fetchImage = async (category) => {
     return "./content/dota2.jpg"
     //var json = await apiRequest('https://api.unsplash.com/photos/random?client_id=9CBJBoPA6QIPQXRIjYELTmDXNZvYybMj-XxUmdeVPNI&query='+category);
     //return json.urls.small;
 }
 
-const submitAnswer = async (e) =>
-{
+const submitAnswer = async (e) => {
     var element = e.srcElement
-    while(element.children.length > 0)
+    while (element.children.length > 0)
         element = element.children[0];
 
     validateAnswer(element.innerHTML);
+    updateStyles();
     createNextButton();
 }
 
-const validateAnswer = async (ans) =>
-{
-    if(ans == questionsList[currentQuestionIndex].correct_answer)
-        console.log("hi");
+const updateStyles = async () => {
+    var answers = document.getElementsByTagName("ul")[0];
+    answers = answers.children;
+    for (let i = 0; i < answers.length; i++) {
+        var correct = await validateAnswer(answers[i].children[0].innerHTML)
+        if(correct)
+        {
+            answers[i].classList.add("correct");
+        }
+        else
+        {
+            answers[i].classList.add("incorrect");
+        }
+    }
+}
+
+const validateAnswer = async (ans) => {
+    if (ans == questionsList[currentQuestionIndex].correct_answer)
+        return true;
+    return false;
 }
 
 const createNextButton = async () => {
     var button = document.getElementById("next-button")
-    if(button)
+    if (button)
         return;
     var board = document.getElementById("single-player-board");
     var nxtButton = document.createElement("button");
@@ -113,13 +123,12 @@ const createNextButton = async () => {
 
 const nextTrivia = async (e) => {
     removeCurrentQuestion(e.srcElement);
-    if(currentQuestionIndex < 9)
-    {
+    if (currentQuestionIndex < 9) {
         console.log("hi");
-        currentQuestionIndex = currentQuestionIndex+1;
+        currentQuestionIndex = currentQuestionIndex + 1;
         var currentQuestion = questionsList[currentQuestionIndex];
         var image = await fetchImage(currentQuestion.category);
-        createTriviaCard(currentQuestion.question,currentQuestion.correct_answer,currentQuestion.incorrect_answers,image);
+        createTriviaCard(currentQuestion.question, currentQuestion.correct_answer, currentQuestion.incorrect_answers, image);
     }
 }
 

@@ -28,7 +28,7 @@
     justify-content: space-evenly;
     margin-right: auto;
 }
-.answers-card > ul > li {
+.question{
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -41,17 +41,19 @@
     transition: all ease-in-out 300ms;
 
     
-    background: linear-gradient(to right, rgb(255, 0, 255) 40%, aqua 60%);
-    background-size: 200% 100%;
+    background: linear-gradient(to right, rgb(255, 255, 255) 33%, rgb(255, 0, 255) 33%,rgb(255, 0, 255) 66%, aqua 66%);
+    background-size: 300% 100%;
     background-position:right bottom;
 }
 
-.answers-card > ul > li:hover {
+.question:not(.correct):not(.incorrect):hover {
     transform: translate(0.2rem,-0.2rem);
     cursor: pointer;
-    background-position:left bottom;
+    background: linear-gradient(to right, rgb(255, 255, 255) 33%, rgb(255, 0, 255) 33%,rgb(255, 0, 255) 67%, aqua 67%);   
+    background-size: 300% 100%;
+    background-position:center bottom;
 }
-.answers-card > ul > li > p {
+.question > p {
     margin: 0;
 }
 
@@ -73,4 +75,15 @@
 
 #next-button:hover {
     transform: translate(0.1rem,0rem);
+}
+
+.correct{
+    background: linear-gradient(to right, rgb(0, 255, 0) 34%, rgb(255, 0, 255) 34%,rgb(255, 0, 255) 67%, aqua 67%);   
+    background-size: 300% 100%;
+    background-position:left bottom;
+}
+.incorrect{
+    background: linear-gradient(to right, rgb(253, 0, 0) 34%, rgb(255, 0, 255) 34%,rgb(255, 0, 255) 67%, aqua 67%);   
+    background-size: 300% 100%;
+    background-position:left bottom;
 }
