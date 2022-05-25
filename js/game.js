@@ -1,5 +1,7 @@
 var currentQuestionIndex;
 var questionsList;
+var questionsLoaded = 0;
+var logged_user = 1;
 
 const rippleTitle = async () => {
     var title = document.getElementById("title");
@@ -16,6 +18,11 @@ const rippleTitle = async () => {
     }
 }
 
+const init = (amount,category) =>{
+    rippleTitle();
+    fetchTrivia(amount,category);
+}
+
 const apiRequest = async (url) => {
     const response = await fetch(url);
     return await response.json(); //extract JSON from the http response
@@ -24,15 +31,15 @@ const apiRequest = async (url) => {
 const fetchTrivia = async () => {
     var json = await apiRequest('https://opentdb.com/api.php?amount=10&category=21&difficulty=medium&type=multiple');
     questionsList = json.results;
+    assignTriviaIds(questionsList);
     currentQuestionIndex = 0;
-    var currentQuestion = questionsList[currentQuestionIndex];
-    var image = await fetchImage(currentQuestion.category);
-    createTriviaCard(currentQuestion.question, currentQuestion.correct_answer, currentQuestion.incorrect_answers, image);
-
 }
 
-const createTriviaCard = async (q, correct, ansList, imageUrl) => {
-    ansList = insertAtRandom(correct, ansList);
+const createTriviaCard = async () => {
+    var q = questionsList[currentQuestionIndex];
+    var correct = q.correct_answer;
+    var imageUrl = await fetchImage(q.category);
+    ansList = insertAtRandom(correct, q.incorrect_answers);
     var board = document.getElementById("single-player-board");
     var card = document.createElement("div");
     board.appendChild(card);
@@ -40,7 +47,7 @@ const createTriviaCard = async (q, correct, ansList, imageUrl) => {
     var answersCard = document.createElement("div");
     answersCard.classList.add("answers-card");
     var question = document.createElement("h2");
-    question.innerHTML = q;
+    question.innerHTML = q.question;
     var answers = document.createElement("ul");
     card.appendChild(question);
     card.appendChild(answersCard);
@@ -82,7 +89,10 @@ const submitAnswer = async (e) => {
     while (element.children.length > 0)
         element = element.children[0];
 
-    validateAnswer(element.innerHTML);
+    if(await validateAnswer(element.innerHTML))
+        submitStat(1);
+    else
+        submitStat(0);
     updateStyles();
     createNextButton();
 }
@@ -123,8 +133,7 @@ const createNextButton = async () => {
 
 const nextTrivia = async (e) => {
     removeCurrentQuestion(e.srcElement);
-    if (currentQuestionIndex < 9) {
-        console.log("hi");
+    if (currentQuestionIndex < questionsList.length) {
         currentQuestionIndex = currentQuestionIndex + 1;
         var currentQuestion = questionsList[currentQuestionIndex];
         var image = await fetchImage(currentQuestion.category);
@@ -136,6 +145,45 @@ const removeCurrentQuestion = async (sender) => {
     var old = document.getElementsByClassName("trivia-card")[0];
     old.remove();
     sender.remove();
+}
+
+const assignTriviaIds = async (questions) =>
+{
+    for(var i = 0; i < questions.length;i++)
+    {
+        assignTrivia(questions[i]);
+        await delay(200);
+    }
+}
+
+const assignTrivia = (question) =>
+{
+    var oReq = new XMLHttpRequest();
+    oReq.onload = function () {
+        question.id = (this.responseText);
+        question.user_created = 0;
+        questionsLoaded++;
+        if(questionsLoaded == questionsList.length)
+            createTriviaCard();
+    };
+    oReq.open("get", "db.php?func=fetchTriviaId&question=" + question.question + "&category=" + question.category, true);
+    oReq.send();
+}
+
+const submitStat = (correct) => 
+{
+    var qId = questionsList[currentQuestionIndex].id;
+    var userCreated = questionsList[currentQuestionIndex].user_created;
+    var uId = logged_user;
+
+    var oReq = new XMLHttpRequest();
+    var url = 'db.php';
+    var params = "func=insertStat&uid=" + uId + "&uc=" + userCreated + "&tid=" + qId + "&correct="+correct;
+    oReq.open('POST', url, true);
+    oReq.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    oReq.onreadystatechange = function () {
+    }
+    oReq.send(params);
 }
 
 const delay = ms => new Promise(res => setTimeout(res, ms));

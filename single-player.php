@@ -1,3 +1,8 @@
+<?php
+    session_start();
+    if(!isset($_SESSION['logged_user']))
+        header('location:index.php');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <div id="page">
@@ -24,7 +29,7 @@
         </header>
     </header>
 
-    <body onload=fetchTrivia()>
+    <body onload=init()>
         <div id="single-player-board" >
         </div>
     </body>

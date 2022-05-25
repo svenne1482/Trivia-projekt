@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-<div id="page">
-
     <head>
         <link rel="stylesheet" href="./css/index.css">
         <script src="./js/index.js"></script>
     </head>
+<div id="page">
     <header >
         <div id="title">
             <h1>T</h1>
@@ -22,7 +21,7 @@
     </header>
 
     <body onload=rippleTitle()>
-        <a href="./single-player.html">Single Player</a>
+        <a href="./single-player.php">Single Player</a>
     </body>
 </div>
 
