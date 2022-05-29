@@ -26,6 +26,7 @@ function getTriviaId($question,$category)
     $row = $result->fetchArray();
     if($row['trivia_id'] != '')
     {
+        $db->close();
         return $row['trivia_id'];
     }
     else
@@ -43,10 +44,12 @@ function insertTrivia($question,$category)
     $stmt->bindParam(':question',$question, SQLITE3_TEXT);
     if($stmt->execute())
     {
+        $db->close();
         return getTriviaId($question,$category);
     }
     else
     {
+        $db->close();
         print -1;
     }
 }
@@ -71,6 +74,49 @@ function getCategoryId($category)
     
 }
 
+function getUsername($id)
+{
+    $db = new SQLite3('./db/trivia.db');
+    $sql = 'SELECT username FROM User WHERE user_id = :id';
+    $stmt = $db->prepare($sql);
+    $stmt->bindParam(':id',$id, SQLITE3_NUM);
+    $result = $stmt->execute();
+    $row = $result->fetchArray();
+    if($row['username'] != '')
+    {
+        return $row['username'];
+    }
+    else
+    {
+        $db->close();
+        return;
+    }
+    
+}
+function isAdmin($id){
+    $db = new SQLite3('./db/trivia.db');
+    $sql = 'SELECT is_admin FROM User WHERE user_id = :id';
+    $stmt = $db->prepare($sql);
+    $stmt->bindParam(':id',$id, SQLITE3_NUM);
+    $result = $stmt->execute();
+    $row = $result->fetchArray();
+    if($row['is_admin'] == '1')
+    {
+        $db->close();
+        return true;
+    }
+    else
+    {
+        $db->close();
+        return false;
+    }
+}
+function getLoggedUser()
+{
+    session_start();
+    print $_SESSION['logged_user'];
+    
+}
 function insertCategory($category)
 {
     $db = new SQLite3('./db/trivia.db');
@@ -147,6 +193,7 @@ function loginUser(){
     $row = $result->fetchArray();
     if($row['user_id'] == '')
     {
+        header('location:login.php');
     }
     else
     {
@@ -155,4 +202,7 @@ function loginUser(){
     }
 }
 
+
+
+    
 ?>

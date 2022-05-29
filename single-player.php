@@ -1,7 +1,7 @@
 <?php
-    session_start();
-    if(!isset($_SESSION['logged_user']))
-        header('location:index.php');
+session_start();
+if (!isset($_SESSION['logged_user']))
+    header('location:login.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -10,7 +10,7 @@
     <head>
         <link rel="stylesheet" href="./css/index.css">
         <link rel="stylesheet" href="./css/game.css">
-        <script src="./js/game.js"></script>
+        <script src="./js/single-player.js"></script>
     </head>
     <header>
         <header>
@@ -26,11 +26,12 @@
                 <h1>T</h1>
                 <h1>Y</h1>
             </div>
+            <?php include('navbar.php') ?>
         </header>
     </header>
 
     <body onload=init()>
-        <div id="single-player-board" >
+        <div id="single-player-board">
         </div>
     </body>
 

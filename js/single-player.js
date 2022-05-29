@@ -1,7 +1,8 @@
 var currentQuestionIndex;
 var questionsList;
 var questionsLoaded = 0;
-var logged_user = 1;
+var logged_user = -1;
+
 
 const rippleTitle = async () => {
     var title = document.getElementById("title");
@@ -19,8 +20,19 @@ const rippleTitle = async () => {
 }
 
 const init = (amount,category) =>{
+    getLoggedUser();
     rippleTitle();
     fetchTrivia(amount,category);
+}
+
+const getLoggedUser = () =>
+{
+    var oReq = new XMLHttpRequest();
+    oReq.onload = function () {
+        logged_user = this.responseText;
+    };
+    oReq.open("get", "db.php?func=getLoggedUser", true);
+    oReq.send();
 }
 
 const apiRequest = async (url) => {
@@ -29,8 +41,9 @@ const apiRequest = async (url) => {
 }
 
 const fetchTrivia = async () => {
-    var json = await apiRequest('https://opentdb.com/api.php?amount=10&category=21&difficulty=medium&type=multiple');
+    var json = await apiRequest('https://opentdb.com/api.php?amount=10&category=18&difficulty=medium&type=multiple');
     questionsList = json.results;
+    delay(200);
     assignTriviaIds(questionsList);
     currentQuestionIndex = 0;
 }
@@ -147,12 +160,11 @@ const removeCurrentQuestion = async (sender) => {
     sender.remove();
 }
 
-const assignTriviaIds = async (questions) =>
+const assignTriviaIds = async () =>
 {
-    for(var i = 0; i < questions.length;i++)
+    if(questionsLoaded < questionsList.length)
     {
-        assignTrivia(questions[i]);
-        await delay(200);
+        assignTrivia(questionsList[questionsLoaded]);
     }
 }
 
@@ -160,13 +172,19 @@ const assignTrivia = (question) =>
 {
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
+        console.log(question.question);
         question.id = (this.responseText);
         question.user_created = 0;
         questionsLoaded++;
         if(questionsLoaded == questionsList.length)
             createTriviaCard();
+        assignTriviaIds();
     };
-    oReq.open("get", "db.php?func=fetchTriviaId&question=" + question.question + "&category=" + question.category, true);
+
+    var q = question.question.replaceAll("&#039;", "%27");
+    q = q.replaceAll("&quot;","%22")
+    q = q.replaceAll("#","%23");
+    oReq.open("get", "db.php?func=fetchTriviaId&question=" + q + "&category=" + question.category, true);
     oReq.send();
 }
 

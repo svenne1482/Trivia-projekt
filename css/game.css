@@ -3,8 +3,15 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin-top: 5vh;
 }
-
+#multi-player-board{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 5vh;
+}
 .trivia-card{
     background-color: white;
     border-radius: 1rem;
@@ -39,11 +46,13 @@
     padding: 1rem;
     margin-bottom: 1rem;
     transition: all ease-in-out 300ms;
-
     
     background: linear-gradient(to right, rgb(255, 255, 255) 33%, rgb(255, 0, 255) 33%,rgb(255, 0, 255) 66%, aqua 66%);
     background-size: 300% 100%;
     background-position:right bottom;
+}
+.question > p{
+    color:black;
 }
 
 .question:not(.correct):not(.incorrect):hover {

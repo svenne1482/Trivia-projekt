@@ -18,10 +18,10 @@
             <h1>T</h1>
             <h1>Y</h1>
         </div>
+        <?php include('navbar.php')?>
     </header>
 
     <body onload=rippleTitle()>
-        <a href="./single-player.php">Single Player</a>
     </body>
 </div>
 
